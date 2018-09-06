@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2017 Datamountaineer.
  *
@@ -13,20 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.datamountaineer.streamreactor.connect.jms.sink.converters
 
-import com.datamountaineer.kcql.FormatType
+import com.datamountaineer.streamreactor.connect.jms.config.JMSSetting
+import com.datamountaineer.streamreactor.connect.schemas.ConverterUtil
+import javax.jms.{Message, Session}
+import org.apache.kafka.connect.data.Struct
+import org.apache.kafka.connect.sink.SinkRecord
 
-object JMSMessageConverterFn {
-  def apply(storedAs: FormatType): JMSMessageConverter = {
-    storedAs match {
-      case FormatType.AVRO => new AvroMessageConverter
-      case FormatType.JSON => new JsonMessageConverter
-      case FormatType.OBJECT => new ObjectMessageConverter
-      case FormatType.BINARY => new ObjectMessageConverter
-      case FormatType.TEXT => new TextMessageConverter
-      case FormatType.MAP => new MapMessageConverter
-    }
+class TextMessageConverter extends JMSMessageConverter with ConverterUtil {
+
+  override def
+
+  convert(record:SinkRecord, session:Session, setting:JMSSetting):(String,Message)=
+
+  {
+    val value = record.value()
+    val struct = value.asInstanceOf[Struct]
+    val msg = session.createTextMessage(struct.getString("xmlText"))
+    (setting.source, msg)
   }
 }

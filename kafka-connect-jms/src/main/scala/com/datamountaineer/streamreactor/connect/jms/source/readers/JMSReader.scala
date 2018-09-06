@@ -17,6 +17,7 @@
 package com.datamountaineer.streamreactor.connect.jms.source.readers
 
 import javax.jms.{Message, MessageConsumer}
+import scala.collection.JavaConverters._
 
 import com.datamountaineer.streamreactor.connect.converters.source.Converter
 import com.datamountaineer.streamreactor.connect.jms.JMSSessionProvider
@@ -53,7 +54,8 @@ class JMSReader(settings: JMSSettings) extends StrictLogging {
 
   def convert(source: String, target: String,  message: Message): SourceRecord = {
     convertersMap(source).getOrElse(None) match {
-      case c: Converter => c.convert(target, source, message.getJMSMessageID, JMSStructMessage.getPayload(message))
+      case c: Converter => c.convert(target, source, message.getJMSMessageID, JMSStructMessage.getPayload(message),
+        JMSStructMessage.getProperties(message).asScala.toMap)
       case None => JMSStructMessage.getStruct(target, message)
     }
   }
